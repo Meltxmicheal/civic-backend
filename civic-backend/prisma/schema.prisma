@@ -1,0 +1,134 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CITIZEN
+  ADMIN
+  AUTHORITY
+}
+
+enum Status {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+enum District {
+  Ariyalur
+  Chengalpattu
+  Chennai
+  Coimbatore
+  Cuddalore
+  Dharmapuri
+  Dindigul
+  Erode
+  Kallakurichi
+  Kancheepuram
+  Karur
+  Krishnagiri
+  Madurai
+  Mayiladuthurai
+  Nagapattinam
+  Namakkal
+  Nilgiris
+  Perambalur
+  Pudukkottai
+  Ramanathapuram
+  Ranipet
+  Salem
+  Sivaganga
+  Tenkasi
+  Thanjavur
+  Theni
+  Thiruvallur
+  Thiruvarur
+  Thoothukudi
+  Tiruchirappalli
+  Tirunelveli
+  Tirupathur
+  Tiruppur
+  Tiruvannamalai
+  Vellore
+  Viluppuram
+  Virudhunagar
+}
+
+model User {
+  id              String    @id @default(uuid())
+  name            String
+  email           String    @unique
+  password        String
+  role            Role      @default(CITIZEN)
+  district        District?
+  createdAt       DateTime  @default(now())
+
+  // 🔐 Admin OTP
+  otp             String?
+  otpExpiresAt    DateTime?
+
+  // 📧 Email verification
+  emailVerified   Boolean   @default(false)
+  emailOtp        String?
+  emailOtpExpiry  DateTime?
+
+  // 🚫 Block system
+  isBlocked       Boolean   @default(false)
+  blockReason     String?
+
+  // 👤 Profile
+  profilePhoto    String?
+  badge           String    @default("Stone")
+
+  // 📊 Scoring
+  validReports    Int       @default(0)
+  rejectedReports Int       @default(0)
+  trustScore      Int       @default(0)
+  adminScore      Int       @default(0)
+
+  reports         Report[]
+  votes           Vote[]
+}
+
+model Report {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  image       String?
+
+  latitude    Float?
+  longitude   Float?
+  address     String?
+
+  district    District?
+  status      Status    @default(PENDING)
+  escalated   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+
+  votes       Vote[]
+}
+
+model Vote {
+  id        String   @id @default(uuid())
+  type      String   // "UP" or "DOWN"
+
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+
+  report    Report   @relation(fields: [reportId], references: [id])
+  reportId  String
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, reportId])
+}
