@@ -8,8 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 // Test Route
-app.get("/", (req, res) => {
-  res.send("🚀 Civic Backend Running Successfully");
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "Backend is live 🚀" });
 });
-
 module.exports = app;
