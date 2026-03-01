@@ -11,4 +11,7 @@ app.use(express.json());
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "Backend is live 🚀" });
 });
+app.get("/", (req, res) => {
+  res.send("Civic Backend Running 🚀");
+});
 module.exports = app;

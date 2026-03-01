@@ -917,6 +917,9 @@ app.post("/citizen/update-email-verify", authMiddleware, async (req, res) => {
   }
 });
 // ================= START SERVER =================
+app.get("/health", (req, res) => {
+  res.status(200).json({ message: "Backend working 🚀" });
+});
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
