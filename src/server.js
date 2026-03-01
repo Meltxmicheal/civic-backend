@@ -17,7 +17,10 @@ const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.json());
-
+// Health Check Route
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "Backend is live 🚀" });
+});
 app.use(cors({
   origin: "http://localhost:3000",
   methods: ["GET", "POST", "PUT", "DELETE"],
@@ -917,6 +920,7 @@ app.post("/citizen/update-email-verify", authMiddleware, async (req, res) => {
   }
 });
 // ================= START SERVER =================
+
 app.get("/health", (req, res) => {
   res.status(200).json({ message: "Backend working 🚀" });
 });
